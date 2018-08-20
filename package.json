@@ -31,13 +31,16 @@
     "plotly.js": "^1.39.4",
     "prop-types": "^15.6.2",
     "react-plotly.js": "^2.2.0",
+    "react-redux": "^5.0.7",
+    "redux": "^4.0.0",
     "sanitize-html": "^1.18.4"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "react": "^16.4.2",
     "react-dom": "^16.4.2",
-    "react-scripts": "^1.1.4"
+    "react-scripts": "^1.1.4",
+    "redux-devtools": "^3.4.1"
   },
   "scripts": {
     "build-css": "node-sass-chokidar src/ -o src/",
