@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import logo from 'images/logo.svg';
 import './App.css';
 
+import LoginRedux from 'lib/components/Login/'
 import Login from 'lib/containers/Login.js'
 import MarkdownSynapse from 'lib/containers/MarkdownSynapse.js'
 import UserFavorites from 'lib/containers/UserFavorites.js';
@@ -122,6 +123,10 @@ class App extends Component {
         <p className="App-intro text-center">
           Synapse production version: {this.state.version}
         </p>
+
+
+        <LoginRedux>
+        </LoginRedux>
 
         <Login onTokenChange={this.handleChange}
                token={this.state.token}
