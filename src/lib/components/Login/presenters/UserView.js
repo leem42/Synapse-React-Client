@@ -2,7 +2,6 @@ import React from 'react'
 import LoginFormContainer from '../containers/LoginFormContainer'
 
 let UserView = ({token}) => {
-
     if (!token) {
         return (
             <div className="container syn-example">

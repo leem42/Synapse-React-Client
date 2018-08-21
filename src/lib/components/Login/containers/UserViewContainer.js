@@ -1,5 +1,5 @@
 import { connect } from 'react-redux'
-import UserView from '../components/UserView'
+import UserView from '../presenters/UserView'
 
 const mapStateToProps = (state) => ({
   token: state.token

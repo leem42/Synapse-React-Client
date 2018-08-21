@@ -1,3 +1,3 @@
-import Root from './components/Root'
+import Root from './presenters/Root'
 
 export default Root

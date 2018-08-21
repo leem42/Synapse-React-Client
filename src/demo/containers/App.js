@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import logo from 'images/logo.svg';
 import './App.css';
 
-import LoginRedux from 'lib/components/Login/'
+import LoginRedux from '../../lib/components/Login/index.js'
 import Login from 'lib/containers/Login.js'
 import MarkdownSynapse from 'lib/containers/MarkdownSynapse.js'
 import UserFavorites from 'lib/containers/UserFavorites.js';
