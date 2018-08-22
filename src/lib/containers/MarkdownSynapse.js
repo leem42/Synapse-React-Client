@@ -1,4 +1,5 @@
 import React from "react";
+import ReactDOM from 'react-dom';
 import * as SynapseConstants from '../utils/SynapseConstants'
 import * as SynapseClient from '../utils/SynapseClient'
 

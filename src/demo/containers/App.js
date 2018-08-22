@@ -120,10 +120,10 @@ class App extends Component {
           <img src={logo} className="App-logo" alt="logo" />
           <h4 className="white-text">Synapse React Client Demo</h4>
         </div>
+
         <p className="App-intro text-center">
           Synapse production version: {this.state.version}
         </p>
-
 
         <LoginRedux>
         </LoginRedux>
@@ -163,30 +163,8 @@ class App extends Component {
           </MarkdownSynapse>
         </CustomMarkdownView>
 
-        <CustomMarkdownView>
-          <MarkdownSynapse token={this.state.token}
-                    ownerId={"syn14568473"}
-                    wikiId={"582406"}
-                    >
-          </MarkdownSynapse>
-        </CustomMarkdownView>
+        
 
-        <CustomMarkdownView>
-            <MarkdownSynapse token={this.state.token}
-                      ownerId={"syn14568473"}
-                      wikiId={"582406"}
-                      markdown={"<wiki markdown that corresponds to syn14568473/582406>"}
-                      >
-            </MarkdownSynapse>
-          </CustomMarkdownView>
-
-          <CustomMarkdownView>
-            <MarkdownSynapse token={this.state.token}
-                      markdown={"# custom markdown\n####no resources attached"}
-                      hasSynapseResources={false}
-                      >
-            </MarkdownSynapse>
-          </CustomMarkdownView>
       </div>
     );
   }

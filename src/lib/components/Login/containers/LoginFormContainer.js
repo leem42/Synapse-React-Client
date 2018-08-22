@@ -5,7 +5,6 @@ import {fetchLogin} from '../actions/'
 const mapDispatchToProps = (dispatch) => {
     return {
         handleLogin: (event, username, password) => {
-            console.log('called inside container')
             event.preventDefault()
             dispatch(fetchLogin({ username, password }))
         }

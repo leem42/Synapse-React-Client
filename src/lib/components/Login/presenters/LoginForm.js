@@ -3,7 +3,6 @@ import React from 'react'
 const LoginForm = ({handleLogin}) => {
     let username
     let password
-    console.log('this is login form, props are ', this.props)
     return (
         <div className="container">
             <form onSubmit={(event) => handleLogin(event, username.value, password.value) }>
