@@ -197,43 +197,39 @@ var StackedRowHomebrew = function (_React$Component) {
                 'div',
                 { style: { marginBottom: "50px" }, className: 'container' },
                 React.createElement(
-                    'div',
+                    'span',
                     null,
                     React.createElement(
-                        'span',
+                        'strong',
                         null,
-                        React.createElement(
-                            'strong',
-                            null,
-                            ' ',
-                            total,
-                            ' '
-                        ),
-                        ' files shown by ',
-                        this.props.alias
+                        ' ',
+                        total,
+                        ' '
                     ),
-                    React.createElement(
-                        'button',
-                        {
-                            className: 'btn btn-default',
-                            type: 'button',
-                            onClick: this.handleArrowClick(NEXT_CLICK),
-                            style: { float: "right" } },
-                        React.createElement('i', { className: 'fas fa-angle-right' })
-                    ),
-                    React.createElement(
-                        'button',
-                        {
-                            className: 'btn btn-default',
-                            type: 'button',
-                            onClick: this.handleArrowClick(PREVIOUS_ITEM_CLICK),
-                            style: { float: "right" } },
-                        React.createElement('i', { className: 'fas fa-angle-left' })
-                    )
+                    ' files shown by ',
+                    this.props.alias
+                ),
+                React.createElement(
+                    'button',
+                    {
+                        className: 'btn btn-default',
+                        type: 'button',
+                        onClick: this.handleArrowClick(NEXT_CLICK),
+                        style: { float: "right" } },
+                    React.createElement('i', { className: 'fas fa-angle-right' })
+                ),
+                React.createElement(
+                    'button',
+                    {
+                        className: 'btn btn-default',
+                        type: 'button',
+                        onClick: this.handleArrowClick(PREVIOUS_ITEM_CLICK),
+                        style: { float: "right" } },
+                    React.createElement('i', { className: 'fas fa-angle-left' })
                 ),
                 React.createElement(
                     'div',
-                    { className: 'container', ref: this.chartRef },
+                    { ref: this.chartRef },
                     x_data.map(function (obj, index) {
                         var rectStyle = {
                             margin: '0px',
