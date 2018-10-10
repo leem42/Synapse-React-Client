@@ -1,16 +1,17 @@
 {
-  "main.css": "static/css/main.6d875f56.css",
-  "main.css.map": "static/css/main.6d875f56.css.map",
-  "main.js": "static/js/main.7ec2642b.js",
-  "main.js.map": "static/js/main.7ec2642b.js.map",
-  "static/js/0.36d5975a.chunk.js": "static/js/0.36d5975a.chunk.js",
-  "static/js/0.36d5975a.chunk.js.map": "static/js/0.36d5975a.chunk.js.map",
+  "main.css": "static/css/main.9982d07a.css",
+  "main.css.map": "static/css/main.9982d07a.css.map",
+  "main.js": "static/js/main.c66e3035.js",
+  "main.js.map": "static/js/main.c66e3035.js.map",
+  "static/js/0.f08ea268.chunk.js": "static/js/0.f08ea268.chunk.js",
+  "static/js/0.f08ea268.chunk.js.map": "static/js/0.f08ea268.chunk.js.map",
   "static/media/DNA_Two.svg": "static/media/DNA_Two.d8f80972.svg",
   "static/media/Data2.svg": "static/media/Data2.1104e430.svg",
   "static/media/Publication.svg": "static/media/Publication.b630024c.svg",
-  "static/media/Study.svg": "static/media/Study.9c527c27.svg",
   "static/media/ctf.svg": "static/media/ctf.4eb55044.svg",
   "static/media/dhart.svg": "static/media/dhart.e554b25a.svg",
   "static/media/logo.svg": "static/media/logo.5d5d9eef.svg",
-  "static/media/ntap.svg": "static/media/ntap.e9543055.svg"
+  "static/media/ntap.svg": "static/media/ntap.e9543055.svg",
+  "static/media/study-active.svg": "static/media/study-active.bc52e72b.svg",
+  "static/media/study-complete.svg": "static/media/study-complete.b012f80b.svg"
 }
