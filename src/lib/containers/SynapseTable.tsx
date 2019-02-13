@@ -395,8 +395,8 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
           const columnName = headers[j].name
           const index = this.findSelectionIndex(this.state.sortedColumnSelection, columnName)
           const { visibleColumnCount = Infinity } = this.props
-          // on iniital load isColumnSelected is null and we by default show all columns that come
-          // before visibileColumnCount
+          // on inital load isColumnSelected is null and we by default show all columns that come
+          // before visibleColumnCount
           const isColumnActiveInitLoad: boolean = j < visibleColumnCount && isColumnSelectedLen === 0
           // past the initial load -- when a user has started clicking items, then isColumnSelected is
           // not null and we verify that this column is part of the selection.
