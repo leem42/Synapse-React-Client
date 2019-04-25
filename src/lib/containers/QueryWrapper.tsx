@@ -9,18 +9,20 @@ import { getNextPageOfData } from '../utils/modules/queryUtils'
 type QueryWrapperProps = {
   initQueryRequest?: QueryBundleRequest
   rgbIndex?: number
+  initialData?: QueryResultBundle
+  // json is a deprecated field
   json?: QueryResultBundle
   token?: string
   showMenu?: boolean
   facetName: string
   loadingScreen?: JSX.Element
   unitDescription?: string
-  facetAliases?: {}
+  facetAliases?: {},
 }
 
 export type QueryWrapperState = {
   /*
-    isAllFilterSelectedForFacet tracks whether for a particular
+     isAllFilterSelectedForFacet tracks whether for a particular
      facet if the 'All' button has been selected, this tracks the
      click event and syncs Facets.tsx and SynapseTable.tsx
   */
@@ -115,6 +117,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
     this.getLastQueryRequest = this.getLastQueryRequest.bind(this)
     this.getNextPageOfData = this.getNextPageOfData.bind(this)
     this.updateParentState = this.updateParentState.bind(this)
+    this.setNewData = this.setNewData.bind(this)
     this.state = QueryWrapper.initialState as QueryWrapperState
   }
 
@@ -124,11 +127,18 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
    * @memberof QueryWrapper
    */
   public componentDidMount() {
-    if (this.props.json === null) {
+    const { initialData = {} as QueryResultBundle, json, } = this.props
+    if (initialData.constructor === Object) {
+      // check if they're passing in data this way
+      if (Object.keys(initialData).length !== 0) {
+        // if its not empty
+        this.setNewData(initialData)
+      }
+    } else if (json === null) {
       this.executeInitialQueryRequest()
     } else {
       this.setState({
-        data: cloneDeep(this.props.json)
+        data: cloneDeep(json)
       })
     }
   }
@@ -141,8 +151,15 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
      *  If component updates and the token has changed (they signed in) then the data should be pulled in. Or if the
      *  sql query has changed of the component then perform an update.
      */
-
-    if (this.props.token !== '' && prevProps.token === '' && !this.props.json) {
+    const { initialData = {} as QueryResultBundle } = this.props
+    if (initialData.constructor === Object) {
+      // check if they're passing in data this way
+      if (Object.keys(initialData).length !== 0 && !this.state.data) {
+        // if its not empty
+        // also have to check if this is a data update from component above
+        this.setNewData(initialData)
+      }
+    } else if (this.props.token !== '' && prevProps.token === '' && !this.props.json) {
       this.executeInitialQueryRequest()
     } else if (prevProps.initQueryRequest.query.sql !== this.props.initQueryRequest!.query.sql) {
       this.executeInitialQueryRequest()
@@ -215,6 +232,28 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
     )
   }
 
+  private setNewData(data: QueryResultBundle) {
+    const lastQueryRequest: QueryBundleRequest = cloneDeep(this.props.initQueryRequest!)
+    const hasMoreData = data.queryResult.queryResults.rows.length === SynapseConstants.PAGE_SIZE
+    const isAllFilterSelectedForFacet = cloneDeep(this.state.isAllFilterSelectedForFacet)
+    data.facets.forEach((el) => {
+      /*
+        this is done for convenience, we could evalulate isAllFilterSelectedForFacet lazily
+        for each facet, but it would require an 'undefined' check which is less than ideal
+      */
+      isAllFilterSelectedForFacet[el.columnName] = true
+    })
+    const newState = {
+      isAllFilterSelectedForFacet,
+      hasMoreData,
+      data,
+      lastQueryRequest,
+      isLoading: false,
+      isLoadingNewData: false
+    }
+    this.setState(newState)
+  }
+
   /**
    * Execute the initial query passed into the component
    *
@@ -232,25 +271,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
       .getQueryTableResults(this.props.initQueryRequest, this.props.token)
       .then(
         (data: QueryResultBundle) => {
-          const lastQueryRequest: QueryBundleRequest = cloneDeep(this.props.initQueryRequest!)
-          const hasMoreData = data.queryResult.queryResults.rows.length === SynapseConstants.PAGE_SIZE
-          const isAllFilterSelectedForFacet = cloneDeep(this.state.isAllFilterSelectedForFacet)
-          data.facets.forEach((el) => {
-            /*
-              this is done for convenience, we could evalulate isAllFilterSelectedForFacet lazily
-              for each facet, but it would require an 'undefined' check which is less than ideal
-            */
-            isAllFilterSelectedForFacet[el.columnName] = true
-          })
-          const newState = {
-            isAllFilterSelectedForFacet,
-            hasMoreData,
-            data,
-            lastQueryRequest,
-            isLoading: false,
-            isLoadingNewData: false
-          }
-          this.setState(newState)
+          this.setNewData(data)
         }
       ).catch((err) => {
         console.log('Failed to get data ', err)

@@ -39,7 +39,7 @@ class Demo extends React.Component<{}, DemoState> {
       version: 0,
       cardSql: 'SELECT * FROM syn16859448',
       cardSelection: SynapseConstants.TOOL,
-      showTabOne: false,
+      showTabOne: true,
       tabOne:
       {
         menuConfig: [

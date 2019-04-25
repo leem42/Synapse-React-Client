@@ -191,37 +191,37 @@ class Login extends React.Component<Props, State> {
     code = searchParams.get('code')
     if (code) {
       SynapseClient.oAuthSessionRequest(this.props.authProvider, code, `${this.props.redirectURL}?provider=${this.props.authProvider}`)
-                .then((synToken: any) => {
-                  SynapseClient.setSessionTokenCookie(synToken.sessionToken).catch((errSetSession) => {
-                    console.log('Error on set sesion token cookie ', errSetSession)
-                  })
-                  this.props.onTokenChange({ token: synToken.sessionToken })
-                  this.setState({
-                    errorMessage: '',
-                    hasLoginInFailed: false,
-                    isSignedIn: true
-                  })
-                })
-                .catch((err: any) => {
-                  if (err.statusCode === 404) {
-                    this.setState({
-                      showRegistration: true
-                    })
-                  }
-                  console.log('Error on sso sign in ', err)
-                })
+      .then((synToken: any) => {
+        SynapseClient.setSessionTokenCookie(synToken.sessionToken).catch((errSetSession) => {
+          console.log('Error on set sesion token cookie ', errSetSession)
+        })
+        this.props.onTokenChange({ token: synToken.sessionToken })
+        this.setState({
+          errorMessage: '',
+          hasLoginInFailed: false,
+          isSignedIn: true
+        })
+      })
+      .catch((err: any) => {
+        if (err.statusCode === 404) {
+          this.setState({
+            showRegistration: true
+          })
+        }
+        console.log('Error on sso sign in ', err)
+      })
     }
   }
   public onSignIn(event: React.MouseEvent<HTMLButtonElement>) {
     event.preventDefault()
     SynapseClient.oAuthUrlRequest(this.props.authProvider, `${this.props.redirectURL}?provider=${this.props.authProvider}`)
-            .then((data: any) => {
-              const authUrl = data.authorizationUrl
-              window.location = authUrl // ping the url
-            })
-            .catch((err: any) => {
-              console.log('Error on oAuth url ', err)
-            })
+    .then((data: any) => {
+      const authUrl = data.authorizationUrl
+      window.location = authUrl // ping the url
+    })
+    .catch((err: any) => {
+      console.log('Error on oAuth url ', err)
+    })
   }
   public onSignOut(event: any) {
     event.preventDefault()

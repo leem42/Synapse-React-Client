@@ -2,19 +2,21 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons'
 import * as PropTypes from 'prop-types'
 import * as React from 'react'
-import { SynapseConstants } from '../utils/'
+import { SynapseConstants, SynapseClient } from '../utils/'
 import { getColorPallette } from './ColorGradient'
 import { Facets } from './Facets'
 import QueryWrapper from './QueryWrapper'
 import StackedBarChart from './StackedBarChart'
 import SynapseTable from './SynapseTable'
 import CardContainer from './CardContainer'
+import { QueryResultBundle } from '../utils/jsonResponses/Table/QueryResultBundle'
 
 library.add(faAngleLeft)
 library.add(faAngleRight)
 
 type MenuState = {
   menuIndex: number
+  [index: string]: QueryResultBundle | number
 }
 
 export type MenuConfig = {
@@ -57,6 +59,56 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
     }
     this.handleHoverLogic = this.handleHoverLogic.bind(this)
     this.switchFacet = this.switchFacet.bind(this)
+    this.getDataForQueryWrapper = this.getDataForQueryWrapper.bind(this)
+  }
+
+  componentDidMount() {
+    /*
+      We process the first item and then load the rest
+    */
+    this.getDataForQueryWrapper()
+  }
+
+  private getDataForQueryWrapper() {
+    const { menuConfig } = this.props
+    const configOne = menuConfig[0]
+    const requestOne = {
+      concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+      partMask: SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
+        SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
+        SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+      query: {
+        sql: configOne.sql,
+        isConsistent: false,
+        limit: 25,
+        offset: 0
+      }
+    }
+    SynapseClient.getQueryTableResults(requestOne).then((dataOnRequestOne) => {
+      // we use index as the key for the data
+      this.setState({ 0: dataOnRequestOne }, () => {
+        menuConfig.slice(1).forEach((config, index) => {
+          const { sql } = config
+          const request = {
+            concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+            partMask: SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
+              SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
+              SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+            query: {
+              sql,
+              isConsistent: false,
+              limit: 25,
+              offset: 0
+            }
+          }
+          SynapseClient.getQueryTableResults(request).then((data) => {
+            this.setState({
+              [index]: data
+            })
+          })
+        })
+      })
+    })
   }
 
   componentDidUpdate(_prevProps: QueryWrapperMenuProps, prevState: MenuState) {
@@ -68,8 +120,20 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
        A future alternative would be to hold the menuIndex value on a per page basis, but that would
        be more difficult.
     */
-    const hasStateChanged = prevState.menuIndex !== this.state.menuIndex
-    if (!hasStateChanged  && this.state.menuIndex !== 0) {
+    const diff = Object.keys(this.state).reduce(
+      (diff, key) => {
+        if (this.state[key] === prevState[key]) {
+          return diff
+        }
+        return {
+          ...diff,
+          [key]: this.state[key]
+        }
+      // tslint:disable-next-line:align
+      }, {})
+    if (Object.keys(diff).length === 0 && this.state.menuIndex !== 0) {
+      console.log('getting data for qwrapper')
+      this.getDataForQueryWrapper()
       // check this isn't an update from the state changing
       // and that we haven't already set the menuIndex back to zero
       this.setState({
@@ -127,8 +191,8 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
         facetName,
         facetAliases,
         unitDescription = '',
-        sql,
         synapseId,
+        sql,
         visibleColumnCount = Infinity,
         title = ''
       } = config
@@ -138,10 +202,12 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
       }
       const showCards = type !== ''
       const showTable = title !== ''
+      const initialData = this.state[index] as QueryResultBundle
       return (
         <span key={facetName} className={className}>
           <QueryWrapper
             showMenu={true}
+            unitDescription={unitDescription}
             initQueryRequest={{
               concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
               partMask: SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
@@ -154,9 +220,9 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
                 offset: 0
               }
             }}
-            unitDescription={unitDescription}
             facetName={facetName}
             token={token}
+            initialData={initialData || {}}
             rgbIndex={rgbIndex}
             facetAliases={facetAliases}
           >

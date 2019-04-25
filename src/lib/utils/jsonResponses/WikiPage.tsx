@@ -10,6 +10,6 @@ export type WikiPage = {
   modifiedBy: string
   modifiedOn: string
   title: string
-    // get out jail free card
+  // get out jail free card
   [x: string]: string | string []
 }

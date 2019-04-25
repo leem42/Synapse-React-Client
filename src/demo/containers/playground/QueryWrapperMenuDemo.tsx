@@ -14,6 +14,27 @@ type DemoState = {
   tabTwo: any
   showTabOne: boolean
 }
+
+// tslint:disable-next-line:max-line-length
+const sql = 'SELECT grantType AS "Grant Type", centerName AS "Grant", consortium AS "Program", species AS "Species", fileFormat AS "Data Format", experimentalStrategy AS "Assay", platform AS "Platform", tumorType AS "Disease Type", sex AS "Gender", tissue AS "Tissue", name as "File Name"  FROM syn9630847'
+
+const facetAliases = {
+  grantType: 'Grant Type',
+  centerName: 'Grant',
+  consortium: 'Program',
+  species: 'Species',
+  fileFormat: 'Data Format',
+  experimentalStrategy: 'Assay',
+  platform: 'Platform',
+  tumorType: 'Disease Type',
+  sex: 'Gender',
+  tissue: 'Tissue',
+  name: 'File Name'
+}
+
+const unitDescription = 'files'
+const synapseId  = 'syn9630847'
+
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
  * module
@@ -28,7 +49,7 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
       isLoading: true,
       ownerId: '',
       showMarkdown: true,
-      showTabOne: true,
+      showTabOne: false,
       tabOne:
       {
         menuConfig: [
@@ -57,36 +78,94 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
       tabTwo: {
         menuConfig: [
           {
-            facetName: 'assay',
-            sql:
-            `SELECT assay as "Assay", id AS "File ID",
-              fundingAgency AS "Funding Agency",
-              diagnosis AS "DIAG", dataType AS "DATA" FROM syn16858331
-            `,
-            facetAliases: {
-              id: 'File ID',
-              fundingAgency: 'Funding Agency',
-              assay: 'Assay',
-            },
-            synapseId: 'syn16858331',
-            title: 'title',
-            unitDescription: 'datum'
+            sql,
+            synapseId,
+            unitDescription,
+            facetAliases,
+            title: 'Grant Type',
+            facetName: 'grantType',
           },
           {
-            facetName: 'dataType',
-            sql: 'SELECT id, fundingAgency, assay, diagnosis, dataType FROM syn16858331',
-            synapseId: 'syn16858331',
-            title: 'title',
-            unitDescription: 'descriptive unit'
+            sql,
+            synapseId,
+            unitDescription,
+            facetAliases,
+            title: 'Grant',
+            facetName: 'centerName',
           },
           {
-            facetName: 'diagnosis',
-            sql: 'SELECT id, fundingAgency, assay, diagnosis, dataType FROM syn16858331',
-            synapseId: 'syn16858331',
-            title: 'title'
-          }
-        ] as MenuConfig[]
-        ,
+            sql,
+            synapseId,
+            unitDescription,
+            facetAliases,
+            title: 'Program',
+            facetName: 'consortium',
+          },
+          {
+            sql,
+            synapseId,
+            unitDescription,
+            facetAliases,
+            title: 'Species',
+            facetName: 'species',
+          },
+          {
+            sql,
+            synapseId,
+            unitDescription,
+            facetAliases,
+            title: 'Theme',
+            facetName: 'Theme'
+          },
+          {
+            sql,
+            synapseId,
+            unitDescription,
+            facetAliases,
+            title: 'Data Format',
+            facetName: 'fileFormat',
+          },
+          {
+            sql,
+            synapseId,
+            unitDescription,
+            facetAliases,
+            title: 'Assay',
+            facetName: 'experimentalStrategy',
+          },
+          {
+            sql,
+            synapseId,
+            unitDescription,
+            facetAliases,
+            title: 'Platform',
+            facetName: 'platform',
+          },
+          {
+            sql,
+            synapseId,
+            unitDescription,
+            facetAliases,
+            title: 'Disease Type',
+            facetName: 'tumorType',
+          },
+          {
+            sql,
+            synapseId,
+            unitDescription,
+            facetAliases,
+            title: 'Gender',
+            facetName: 'sex',
+          },
+          {
+            sql,
+            synapseId,
+            unitDescription,
+            facetAliases,
+            title: 'Tissue',
+            facetName: 'tissue',
+          },
+        ]as MenuConfig[],
         rgbIndex: 5
       }
       ,
