@@ -9,6 +9,10 @@ export enum EntityColumnType {
   LINK = 'LINK',
   LARGETEXT = 'LARGETEXT',
   USERID = 'USERID',
+  STRING_LIST = 'STRING_LIST',
+  INTEGER_LIST = 'INTEGER_LIST',
+  BOOLEAN_LIST = 'BOOLEAN_LIST',
+  DATE_LIST = 'DATE_LIST',
 }
 
 // https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/SelectColumn.html

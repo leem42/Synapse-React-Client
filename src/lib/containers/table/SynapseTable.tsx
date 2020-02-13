@@ -302,11 +302,11 @@ export default class SynapseTable extends React.Component<
     return distinctEntities
   }
 
-  public getColumnIndiciesWithType(columnType: EntityColumnType) {
+  public getColumnIndiciesWithType(...columnTypes: EntityColumnType[]) {
     const { data } = this.props
     const columnsOfTypeEntity: number[] = []
     data?.selectColumns?.forEach((el, index) => {
-      if (el.columnType === columnType) {
+      if (columnTypes.includes(el.columnType)) {
         columnsOfTypeEntity.push(index)
       }
     })
@@ -843,6 +843,16 @@ export default class SynapseTable extends React.Component<
     const dateColumnIndicies = this.getColumnIndiciesWithType(
       EntityColumnType.DATE,
     )
+    const dateListColumnIndicies = this.getColumnIndiciesWithType(
+      EntityColumnType.DATE_LIST,
+    )
+    const booleanListColumnIndicies = this.getColumnIndiciesWithType(
+      EntityColumnType.BOOLEAN_LIST,
+    )
+    const otherListColumnIndicies = this.getColumnIndiciesWithType(
+      EntityColumnType.STRING_LIST,
+      EntityColumnType.INTEGER_LIST,
+    )
     const isColumnSelectedLen = isColumnSelected.length
     // find column indices that are COUNT type
     const countColumnIndexes = this.getCountFunctionColumnIndexes(
@@ -893,6 +903,9 @@ export default class SynapseTable extends React.Component<
                     entityColumnIndicies,
                     userColumnIndicies,
                     dateColumnIndicies,
+                    dateListColumnIndicies,
+                    booleanListColumnIndicies,
+                    otherListColumnIndicies,
                     colIndex,
                     columnValue,
                     isBold,
@@ -928,6 +941,9 @@ export default class SynapseTable extends React.Component<
     entityColumnIndicies,
     userColumnIndicies,
     dateColumnIndicies,
+    dateListColumnIndicies,
+    booleanListColumnIndicies,
+    otherListColumnIndicies,
     colIndex,
     columnValue,
     isBold,
@@ -939,6 +955,9 @@ export default class SynapseTable extends React.Component<
     entityColumnIndicies: number[]
     userColumnIndicies: number[]
     dateColumnIndicies: number[]
+    dateListColumnIndicies: number[]
+    booleanListColumnIndicies: number[]
+    otherListColumnIndicies: number[]
     colIndex: number
     columnValue: string
     isBold: string
@@ -957,6 +976,9 @@ export default class SynapseTable extends React.Component<
         return [longString.substr(0, maxCharCount), true]
       }
     }
+    if (!columnValue) {
+      return <></>
+    }
     if (isMarkdownColumn) {
       return <MarkdownSynapse renderInline={true} markdown={columnValue} />
     }
@@ -971,13 +993,44 @@ export default class SynapseTable extends React.Component<
         />
       )
     }
+    if (dateListColumnIndicies.includes(colIndex)) {
+      const jsonData: number[] = JSON.parse(columnValue)
+      return jsonData.map((val: number, index: number) => {
+        return (
+          <span key={val} className={isBold}>
+            {new Date(val).toLocaleString()}
+            {index !== jsonData.length - 1 ? ', ' : ''}
+          </span>
+        )
+      })
+    }
+    if (booleanListColumnIndicies.includes(colIndex)) {
+      const jsonData: boolean[] = JSON.parse(columnValue)
+      return jsonData.map((val: boolean, index: number) => {
+        return (
+          <span key={`${val}${index}`} className={isBold}>
+            {val ? 'true' : 'false'}
+            {index !== jsonData.length - 1 ? ', ' : ''}
+          </span>
+        )
+      })
+    }
+    if (otherListColumnIndicies.includes(colIndex)) {
+      const jsonData: string[] = JSON.parse(columnValue)
+      return jsonData.map((val: string, index: number) => {
+        return (
+          <span key={val} className={isBold}>
+            {val}
+            {index !== jsonData.length - 1 ? ', ' : ''}
+          </span>
+        )
+      })
+    }
     if (dateColumnIndicies.includes(colIndex)) {
-      return columnValue ? (
+      return (
         <p className={isBold}>
           {new Date(Number(columnValue)).toLocaleString()}
         </p>
-      ) : (
-        <></>
       )
     } else if (
       userColumnIndicies.includes(colIndex) &&
