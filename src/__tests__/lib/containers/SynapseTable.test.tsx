@@ -14,6 +14,7 @@ import {
   QueryResultBundle,
   Row,
   QueryBundleRequest,
+  EntityColumnType,
 } from 'lib/utils/synapseTypes/'
 import * as React from 'react'
 import { Modal } from 'react-bootstrap'
@@ -384,17 +385,17 @@ describe('basic functionality', () => {
         {
           id: MOCKED_STRING,
           name: MOCKED_STRING,
-          columnType: 'ENTITYID',
+          columnType: EntityColumnType.ENTITYID,
         },
         {
           id: MOCKED_STRING,
           name: MOCKED_STRING,
-          columnType: 'USERID',
+          columnType: EntityColumnType.USERID,
         },
         {
           id: MOCKED_STRING,
           name: MOCKED_STRING,
-          columnType: 'DATE',
+          columnType: EntityColumnType.DATE,
         },
       ],
       queryResult: {
@@ -405,17 +406,17 @@ describe('basic functionality', () => {
           etag: MOCKED_STRING,
           headers: [
             {
-              columnType: 'ENTITYID',
+              columnType: EntityColumnType.ENTITYID,
               name: MOCKED_STRING,
               id: MOCKED_STRING,
             },
             {
-              columnType: 'USERID',
+              columnType: EntityColumnType.USERID,
               name: MOCKED_STRING,
               id: MOCKED_STRING,
             },
             {
-              columnType: 'DATE',
+              columnType: EntityColumnType.DATE,
               name: MOCKED_STRING,
               id: MOCKED_STRING,
             },
@@ -447,11 +448,15 @@ describe('basic functionality', () => {
     })
 
     it('gets column indicies correctly ', () => {
-      const entities = instance.getColumnIndiciesWithType('ENTITYID')
+      const entities = instance.getColumnIndiciesWithType(
+        EntityColumnType.ENTITYID,
+      )
       expect(entities).toEqual([ENTITYID_INDEX])
-      const userIds = instance.getColumnIndiciesWithType('USERID')
+      const userIds = instance.getColumnIndiciesWithType(
+        EntityColumnType.USERID,
+      )
       expect(userIds).toEqual([USERID_INDEX])
-      const dates = instance.getColumnIndiciesWithType('DATE')
+      const dates = instance.getColumnIndiciesWithType(EntityColumnType.DATE)
       expect(dates).toEqual([DATE_INDEX])
     })
 

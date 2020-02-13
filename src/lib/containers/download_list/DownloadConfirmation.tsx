@@ -1,7 +1,5 @@
-import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 import { SynapseClient, SynapseConstants } from '../../utils'
-import { testDownloadSpeed } from '../../utils/functions/testDownloadSpeed'
 import {
   AddFilesToDownloadListRequest,
   Query,
@@ -48,15 +46,11 @@ async function getFilesInformation(
   const { queryCount, sumFileSizes } = await SynapseClient.getQueryTableResults(
     queryBundleRequestSizeInformation,
   )
-  const estimatedDownloadBytesPerSecond = await testDownloadSpeed(token)
   const size = sumFileSizes ? sumFileSizes['sumFileSizesBytes'] : 0
-  const durationSeconds = size / estimatedDownloadBytesPerSecond
-  const duration = moment.duration(durationSeconds, 'seconds').humanize()
 
   return {
     fileCount: queryCount || 0,
     fileSize: size,
-    downloadEstimate: duration,
     status: StatusEnum.INFO,
   }
 }

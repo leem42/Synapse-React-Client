@@ -201,8 +201,12 @@ export default class SynapseTable extends React.Component<
     }
     const mapEntityIdToHeader = cloneDeep(this.state.mapEntityIdToHeader)
     const mapUserIdToHeader = cloneDeep(this.state.mapUserIdToHeader)
-    const entityIdColumnIndicies = this.getColumnIndiciesWithType('ENTITYID')
-    const userIdColumnIndicies = this.getColumnIndiciesWithType('USERID')
+    const entityIdColumnIndicies = this.getColumnIndiciesWithType(
+      EntityColumnType.ENTITYID,
+    )
+    const userIdColumnIndicies = this.getColumnIndiciesWithType(
+      EntityColumnType.USERID,
+    )
     const distinctEntityIds = this.getUniqueEntities(
       data,
       mapEntityIdToHeader,
@@ -301,13 +305,11 @@ export default class SynapseTable extends React.Component<
   public getColumnIndiciesWithType(columnType: EntityColumnType) {
     const { data } = this.props
     const columnsOfTypeEntity: number[] = []
-    data &&
-      data.selectColumns &&
-      data.selectColumns.forEach((el, index) => {
-        if (el.columnType === columnType) {
-          columnsOfTypeEntity.push(index)
-        }
-      })
+    data?.selectColumns?.forEach((el, index) => {
+      if (el.columnType === columnType) {
+        columnsOfTypeEntity.push(index)
+      }
+    })
     return columnsOfTypeEntity
   }
 
@@ -832,9 +834,15 @@ export default class SynapseTable extends React.Component<
       mapEntityIdToHeader,
       mapUserIdToHeader,
     } = this.state
-    const entityColumnIndicies = this.getColumnIndiciesWithType('ENTITYID')
-    const userColumnIndicies = this.getColumnIndiciesWithType('USERID')
-    const dateColumnIndicies = this.getColumnIndiciesWithType('DATE')
+    const entityColumnIndicies = this.getColumnIndiciesWithType(
+      EntityColumnType.ENTITYID,
+    )
+    const userColumnIndicies = this.getColumnIndiciesWithType(
+      EntityColumnType.USERID,
+    )
+    const dateColumnIndicies = this.getColumnIndiciesWithType(
+      EntityColumnType.DATE,
+    )
     const isColumnSelectedLen = isColumnSelected.length
     // find column indices that are COUNT type
     const countColumnIndexes = this.getCountFunctionColumnIndexes(

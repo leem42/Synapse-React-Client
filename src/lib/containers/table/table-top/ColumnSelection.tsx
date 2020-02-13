@@ -4,6 +4,7 @@ import { ElementWithTooltip } from '../../widgets/ElementWithTooltip'
 import { SelectColumn } from '../../../utils/synapseTypes/'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import ColumnsSvg from '../../../assets/icons/columns.svg'
+import { unCamelCase } from '../../../utils/functions/unCamelCase'
 
 type ColumnSelectionProps = {
   headers: SelectColumn[]
@@ -84,7 +85,7 @@ export const ColumnSelection: React.FunctionComponent<ColumnSelectionProps> = (
                 className={maybeShowPrimaryColor}
                 icon="check"
               />
-              {header.name}
+              {unCamelCase(header.name)}
             </Dropdown.Item>
           )
         })}

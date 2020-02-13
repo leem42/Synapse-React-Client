@@ -1,14 +1,15 @@
-export type EntityColumnType =
-  | 'STRING'
-  | 'DOUBLE'
-  | 'BOOLEAN'
-  | 'INTEGER'
-  | 'DATE'
-  | 'FILEHANDLEID'
-  | 'ENTITYID'
-  | 'LINK'
-  | 'LARGETEXT'
-  | 'USERID'
+export enum EntityColumnType {
+  STRING = 'STRING',
+  DOUBLE = 'DOUBLE',
+  BOOLEAN = 'BOOLEAN',
+  INTEGER = 'INTEGER',
+  DATE = 'DATE',
+  FILEHANDLEID = 'FILEHANDLEID',
+  ENTITYID = 'ENTITYID',
+  LINK = 'LINK',
+  LARGETEXT = 'LARGETEXT',
+  USERID = 'USERID',
+}
 
 // https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/SelectColumn.html
 export type SelectColumn = {

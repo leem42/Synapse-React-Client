@@ -9,7 +9,7 @@ import MarkdownSynapseDemo from './MarkdownSynapseDemo'
 import { NewsFeedDemo } from './NewsFeedDemo'
 import FormServicesIntegrationDemo from './FormServicesIntegrationDemo'
 import QueryWrapperPlotNavDemo from './QueryWrapperPlotNavDemo'
-import DownloadListTable from 'lib/containers/download_list/DownloadListTable'
+import { DownloadListTableDemo } from './DownloadListTableDemo'
 import { WidgetDemo } from './WidgetDemo'
 import { RouteChildrenProps } from 'react-router'
 import { AccessRequirementDemo } from './AccessRequirementDemo'
@@ -145,13 +145,7 @@ const App = ({
       <Route
         exact={true}
         path={`${match.url}/DownloadListTableDemo`}
-        component={() => (
-          <div className="container download-list-demo">
-            <div className="col-xs-10">
-              <DownloadListTable token={token} />
-            </div>
-          </div>
-        )}
+        component={() => <DownloadListTableDemo token={token} />}
       />
 
       <Route

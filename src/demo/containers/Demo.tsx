@@ -2,15 +2,17 @@ import * as React from 'react'
 import { SynapseVersion } from '../../lib/utils/synapseTypes/'
 import { SynapseClient } from '../../lib/utils/'
 import QueryWrapperMenu, {
-  MenuConfig, QueryWrapperMenuProps,
+  MenuConfig,
+  QueryWrapperMenuProps,
 } from '../../lib/containers/QueryWrapperMenu'
 import Uploader from '../../lib/containers/Uploader'
 import FileContentDownloadUploadDemo from '../../lib/containers/FileContentDownloadUploadDemo'
 import StatisticsPlot from 'lib/containers/StatisticsPlot'
 import { testDownloadSpeed } from '../../lib/utils/functions/testDownloadSpeed'
+import ShowDownload from 'lib/containers/download_list/ShowDownload'
 
 type DemoState = {
-  token: string | null
+  token: string | undefined
   ownerId: string
   isLoading: boolean
   showMarkdown: boolean
@@ -47,10 +49,14 @@ class Demo extends React.Component<{}, DemoState> {
         tableConfiguration: {
           title: 'title',
           enableDownloadConfirmation: true,
-          enableLeftFacetFilter: true
+          enableLeftFacetFilter: true,
         },
         entityId: 'syn16787123',
         menuConfig: [
+          {
+            facet: 'name',
+            sql: 'SELECT name, grant FROM syn11346063',
+          },
           {
             facet: 'dataStatus',
             sql: 'SELECT studyStatus, dataStatus FROM syn16787123',
@@ -60,16 +66,13 @@ class Demo extends React.Component<{}, DemoState> {
             sql: 'SELECT * FROM syn16787123',
           },
           {
-            facet: 'name',
-            sql: 'SELECT name, grant FROM syn11346063',
-          },
-          {
             facet: 'grant',
             sql: 'SELECT name, grant FROM syn11346063 Group by grant',
           },
           {
             facet: 'name',
-            sql: 'SELECT name, grant, sex, dataType, consortium FROM syn11346063 WHERE ( ( "consortium" = \'AMP-AD\') )',
+            sql:
+              'SELECT name, grant, sex, dataType, consortium FROM syn11346063 WHERE ( ( "consortium" = \'AMP-AD\') )',
           },
 
           {
@@ -78,8 +81,9 @@ class Demo extends React.Component<{}, DemoState> {
           },
           {
             facet: 'metadataType',
-            sql: "SELECT `id`, `metadataType`, `dataType`, `assay`↵  FROM syn11346063↵  WHERE ((`study` LIKE '%BroadAstrom109%') AND (`dataSubtype` = 'metadata'))"
-          }
+            sql:
+              "SELECT `id`, `metadataType`, `dataType`, `assay`↵  FROM syn11346063↵  WHERE ((`study` LIKE '%BroadAstrom109%') AND (`dataSubtype` = 'metadata'))",
+          },
         ],
         rgbIndex: 2,
       },
@@ -239,6 +243,9 @@ class Demo extends React.Component<{}, DemoState> {
           </div>
         )}
         <div className="container">
+          <div>
+            <ShowDownload to="www.synapse.org" token={token} />
+          </div>
           <button
             className="btn btn-default"
             onClick={() => {
@@ -250,9 +257,11 @@ class Demo extends React.Component<{}, DemoState> {
           <QueryWrapperMenu
             isConsistent={true}
             name={'Demo'}
-            entityId={ this.state.showTabOne
-              ? this.state.tabOne.entityId
-              : this.state.tabTwo.entityId}
+            entityId={
+              this.state.showTabOne
+                ? this.state.tabOne.entityId
+                : this.state.tabTwo.entityId
+            }
             token={
               SynapseClient.IS_OUTSIDE_SYNAPSE_ORG ? token! : this.state.token!
             }

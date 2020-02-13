@@ -57,6 +57,7 @@ import {
   EntityId,
 } from './synapseTypes/'
 import UniversalCookies from 'universal-cookie'
+import { dispatchDownloadListChangeEvent } from './functions/dispatchDownloadListChangeEvent'
 
 const cookies = new UniversalCookies()
 
@@ -307,7 +308,10 @@ export const addFilesToDownloadList = (
         requestUrl,
         sessionToken,
         updateParentState,
-      )
+      ).then(data => {
+        dispatchDownloadListChangeEvent(data.downloadList)
+        return data
+      })
     })
     .catch((error: any) => {
       throw error

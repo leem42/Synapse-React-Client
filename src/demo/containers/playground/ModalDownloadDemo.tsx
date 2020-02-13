@@ -30,8 +30,7 @@ class ModalDownloadDemo extends React.Component<{}, State> {
     return (
       <div className="container">
         <button onClick={this.onOpen} className="btn btn-primary">
-          {' '}
-          Show ModalDownload{' '}
+          Show ModalDownload
         </button>
         {this.state.showModal && (
           <ModalDownload
