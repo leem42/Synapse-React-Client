@@ -1,7 +1,14 @@
 import * as React from 'react'
 import HeaderCard from './HeaderCard'
 import { CardFooter, Icon } from './row_renderers/utils'
-import { CardLink, CommonCardProps, MarkdownLink } from './CardContainerLogic'
+import {
+  InternalCardLink,
+  CommonCardProps,
+  MarkdownLink,
+  CardLinks,
+  SingleCardLink,
+  ArrayCardLink,
+} from './CardContainerLogic'
 import { unCamelCase } from '../utils/functions/unCamelCase'
 import MarkdownSynapse from './MarkdownSynapse'
 
@@ -15,13 +22,21 @@ export type KeyToAliasMap = {
   [index: string]: KeyToAlias
 }
 
+// Needs to have fields the same as GenericCardSchema
+export enum CardTextPosition {
+  TITLE = 'TITLE',
+  SUBTITLE = 'SUBTITLE',
+  DESCRIPTION = 'DESCRIPTION',
+  SECONDARYLABELS = 'SECONDARYLABELS',
+}
+
 export type GenericCardSchema = {
   type: string
   title: string
   subTitle?: string
   description?: string
-  icon?: string
   secondaryLabels?: any[]
+  icon?: string
   link?: string
 }
 
@@ -68,12 +83,19 @@ export default class GenericCard extends React.Component<
 
   public renderTitleLink(
     link: string,
-    titleLink?: CardLink,
+    cardLinks: CardLinks,
     data?: string[],
     schema?: any,
   ) {
     let linkDisplay = link
     let target = '_self'
+    const titleLink = cardLinks.find(
+      // See more from https://www.typescriptlang.org/docs/handbook/advanced-types.html#using-type-predicates
+      // typescript can't automatically infer functions which are typeguards, so you have to add
+      // a type predicate
+      (el): el is SingleCardLink => el.position === CardTextPosition.TITLE,
+    )
+
     if (link.match(SYNAPSE_REGX)) {
       // its a synId
       linkDisplay = `https://www.synapse.org/#!Synapse:${link}`
@@ -86,7 +108,7 @@ export default class GenericCard extends React.Component<
       if (!data || !schema) {
         throw Error('Must specify CardLink and data for linking to work')
       }
-      const { matchColumnName, URLColumnName } = titleLink
+      const { link } = titleLink
       const indexInData = schema[matchColumnName]
       if (indexInData === undefined) {
         console.error(
@@ -121,7 +143,7 @@ export default class GenericCard extends React.Component<
 
   public renderLabel(
     value: string,
-    labelLink: CardLink | MarkdownLink,
+    labelLink: InternalCardLink | MarkdownLink,
     isHeader: boolean,
   ) {
     if (labelLink.isMarkdown) {
@@ -151,6 +173,49 @@ export default class GenericCard extends React.Component<
     })
   }
 
+  public renderSingleCardLink(
+    value: string,
+    cardLinks: CardLinks,
+    cardTextPosition: Exclude<
+      CardTextPosition,
+      CardTextPosition.SECONDARYLABELS
+    >,
+    isHeader: boolean,
+  ) {
+    const cardLink = cardLinks.find(
+      (el): el is SingleCardLink => el.position === cardTextPosition,
+    )
+    if (!cardLink) {
+      return value
+    }
+    const { link } = cardLink
+    if (link.isMarkdown) {
+      return <MarkdownSynapse renderInline={true} markdown={value} />
+    }
+    const { baseURL, URLColumnName } = link
+    const split = value.split(',')
+    let className = ''
+    const style: React.CSSProperties = {}
+    if (isHeader) {
+      className = 'SRC-lightLink'
+    } else {
+      className = 'SRC-primary-text-color'
+    }
+    return split.map((el, index) => {
+      const href = `#/${baseURL}?${URLColumnName}=${el}`
+      return (
+        <React.Fragment key={el}>
+          <a href={href} key={el} className={className} style={style}>
+            {el}
+          </a>
+          {index < split.length - 1 && (
+            <span style={{ marginRight: 4 }}> , </span>
+          )}
+        </React.Fragment>
+      )
+    })
+  }
+
   render() {
     const {
       schema,
@@ -160,8 +225,7 @@ export default class GenericCard extends React.Component<
       backgroundColor,
       iconOptions,
       isHeader = false,
-      titleLinkConfig,
-      labelLinkConfig,
+      cardLinks = [],
       facetAliases = {},
       isAlignToLeftNav = false,
     } = this.props
@@ -181,19 +245,23 @@ export default class GenericCard extends React.Component<
     const linkValue: string = data[schema[link]] || ''
     const { linkDisplay, target } = this.renderTitleLink(
       linkValue,
-      titleLinkConfig,
+      cardLinks,
       data,
       schema,
     )
     const values: string[][] = []
     const { secondaryLabels = [] } = genericCardSchemaDefined
+    const secondaryLabelLinks = cardLinks.find(
+      (el): el is ArrayCardLink =>
+        el.position === CardTextPosition.SECONDARYLABELS,
+    )
     for (let i = 0; i < secondaryLabels.length; i += 1) {
       const columnName = secondaryLabels[i]
       let value = data[schema[columnName]]
       if (value) {
-        const labelLink =
-          labelLinkConfig &&
-          labelLinkConfig.find(el => el.matchColumnName === columnName)
+        const labelLink = secondaryLabelLinks?.links.find(
+          el => el.matchColumnName === columnName,
+        )
         if (labelLink) {
           // create link for this column
           value = this.renderLabel(value, labelLink, isHeader)
@@ -241,6 +309,7 @@ export default class GenericCard extends React.Component<
     const descriptionSubTitle =
       facetAliases[genericCardSchemaDefined.description || ''] ||
       unCamelCase(genericCardSchemaDefined.description)
+    const renderedSubtitle = 
     return (
       <div style={style} className={'SRC-portalCard'}>
         <div className="SRC-cardThumbnail">
@@ -272,7 +341,12 @@ export default class GenericCard extends React.Component<
               data-search-handle={stubTitleSearchHandle}
               className="SRC-author"
             >
-              {subTitle}
+              {this.renderSingleCardLink(
+                subTitle,
+                cardLinks,
+                CardTextPosition.SUBTITLE,
+                isHeader,
+              )}
             </div>
           )}
           {/* 
@@ -289,7 +363,7 @@ export default class GenericCard extends React.Component<
                 {this.getCutoff(description).previewText}
               </span>
               {description.length >= CHAR_COUNT_CUTOFF && (
-                <a
+                <button
                   style={{
                     fontSize: '14px',
                     cursor: 'pointer',
@@ -299,7 +373,7 @@ export default class GenericCard extends React.Component<
                   onClick={this.toggleShowMore}
                 >
                   ...Show More
-                </a>
+                </button>
               )}
             </div>
           )}

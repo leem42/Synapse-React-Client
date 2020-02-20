@@ -8,7 +8,7 @@ import GenericCard, {
 } from '../../../lib/containers/GenericCard'
 import * as Utils from '../../../lib/containers/row_renderers/utils'
 import {
-  CardLink,
+  InternalCardLink,
   LabelLinkConfig,
 } from '../../../lib/containers/CardContainerLogic'
 import MarkdownSynapse from 'lib/containers/MarkdownSynapse'
@@ -148,7 +148,7 @@ describe('it makes the correct URL for the title', () => {
     const schema = {
       [matchColumnName]: 0,
     }
-    const titleLinkConfig: CardLink = {
+    const titleLinkConfig: InternalCardLink = {
       isMarkdown: false,
       baseURL: 'Explore/Projects',
       matchColumnName,

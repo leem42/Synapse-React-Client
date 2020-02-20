@@ -8,11 +8,12 @@ import {
 } from '../utils/functions/sqlFunctions'
 import { QueryBundleRequest, QueryResultBundle } from '../utils/synapseTypes/'
 import CardContainer from './CardContainer'
-import { GenericCardSchema, IconOptions } from './GenericCard'
+import { GenericCardSchema, IconOptions, CardTextPosition } from './GenericCard'
 // TODO: this import nearly doubles the package size of SRC as a UMD build by ~400KB
 // will have to find a way to use individual lodash packages instead of the entire thing
 import { cloneDeep, isEqual } from 'lodash-es'
-export interface CardLink {
+
+export interface InternalCardLink {
   baseURL: string
   // the key that will go into the url
   URLColumnName: string
@@ -28,13 +29,26 @@ export type MarkdownLink = {
 }
 
 // Specify the indices in the values [] that should be rendered specially
-export type LabelLinkConfig = (CardLink | MarkdownLink)[]
+export type GenericLink = InternalCardLink | MarkdownLink
+
+export type SingleCardLink = {
+  position: Exclude<CardTextPosition, CardTextPosition.SECONDARYLABELS>
+  // These links directly map to one value
+  link: GenericLink
+}
+
+export type ArrayCardLink = {
+  // Secondary labels is an array which may one or more links within them
+  position: CardTextPosition.SECONDARYLABELS
+  links: GenericLink[]
+}
+
+export type CardLinks = (SingleCardLink | ArrayCardLink)[]
 
 export type CommonCardProps = {
   genericCardSchema?: GenericCardSchema
   secondaryLabelLimit?: number
-  titleLinkConfig?: CardLink
-  labelLinkConfig?: LabelLinkConfig
+  cardLinks?: CardLinks
 }
 
 export type CardConfiguration = {
@@ -196,7 +210,6 @@ export default class CardContainerLogic extends React.Component<
       concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
       partMask:
         SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
-        SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
         SynapseConstants.BUNDLE_MASK_QUERY_RESULTS |
         SynapseConstants.BUNDLE_MASK_QUERY_COUNT,
       entityId,
@@ -213,7 +226,6 @@ export default class CardContainerLogic extends React.Component<
         const queryRequestWithoutCount = cloneDeep(initQueryRequest)
         queryRequestWithoutCount.partMask =
           SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
-          SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
           SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
 
         const hasMoreData =
