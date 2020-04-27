@@ -74,6 +74,7 @@ class QueryWrapperMenuDemo extends React.Component<
         tableConfiguration: {
           title: 'title',
           enableDownloadConfirmation: true,
+          enableLeftFacetFilter: true,
           showAccessColumn: true,
         },
         searchConfiguration: {
@@ -169,6 +170,7 @@ class QueryWrapperMenuDemo extends React.Component<
         unitDescription: 'datum',
         tableConfiguration: {
           title: 'title',
+          enableLeftFacetFilter: true,
         },
         entityId: 'syn11346063',
         searchConfiguration: {

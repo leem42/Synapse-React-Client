@@ -19,6 +19,7 @@ export default function ManagedACTAccessRequirementComponent({
   useEffect(() => {
     const getManagedACTAccessData = async () => {
       try {
+        console.log('calling wikipageRequirement')
         const wikipageRequirement = await SynapseClient.getWikiPageKey(
           token,
           accessRequirement.id,

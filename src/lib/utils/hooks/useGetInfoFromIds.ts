@@ -1,10 +1,10 @@
-import { useState } from 'react'
 import { EntityHeader, Reference, ReferenceList } from '../synapseTypes'
 import { getEntityHeader } from '../SynapseClient'
 import { getUserProfileWithProfilePicAttached } from '../functions/getUserData'
 import { UserProfile } from '../synapseTypes'
 import { SynapseConstants } from '..'
 import { without, chunk, uniq } from 'lodash-es'
+import { useGlobalState } from '../../global_state'
 import useDeepCompareEffect from 'use-deep-compare-effect'
 
 export type HookType = 'ENTITY_HEADER' | 'USER_PROFILE'
@@ -74,50 +74,25 @@ const getUserProfileItems = async (
 //******************************************************************************************* */
 export default function useGetInfoFromIds<T extends EntityHeader | UserProfile>(
   props: UseGetInfoFromIdsProps,
-) {
+): T[] {
   const { token, ids, type } = props
-  const [data, setData] = useState<Array<T>>([])
+
+  const [data, setData] = useGlobalState(
+    type === 'ENTITY_HEADER' ? 'entityHeader' : 'userProfile',
+  )
 
   const idProp = (type: HookType) =>
     type === 'USER_PROFILE' ? 'ownerId' : 'id'
 
-  const storageKey = (type: HookType) =>
-    type === 'USER_PROFILE'
-      ? SynapseConstants.USER_PROFILE_STORAGE_KEY
-      : SynapseConstants.ENTITY_HEADER_STORAGE_KEY
-
   // look at current list of data, see if incoming ids has new data,
   // if so grab those ids
-  const curList = data.map(el => el[idProp(type)])
+  const curList = (data as Array<UserProfile | EntityHeader>).map(el => {
+    const key = idProp(type)
+    return el[key]
+  }) as string[]
+
   const incomingList = ids.filter(el => el !== SynapseConstants.VALUE_NOT_SET)
   const newValues = uniq(without(incomingList, ...curList))
-
-  const saveToSessionStorage = (data: T[], type: HookType) => {
-    if (!data.length) {
-      return
-    }
-    //get what's there
-    const dataInStorage = sessionStorage.getItem(storageKey(type))
-    try {
-      const dataInStorageAsObjectArr: T[] = dataInStorage
-        ? JSON.parse(dataInStorage)
-        : []
-      //get an array of ids for items already in storage
-      const ids = dataInStorageAsObjectArr.map(item => item[idProp(type)])
-      //push all the new data if ids are new
-      for (const dataObject of data) {
-        if (!ids.includes(dataObject[idProp(type)])) {
-          dataInStorageAsObjectArr.push(dataObject)
-        }
-      }
-      sessionStorage.setItem(
-        storageKey(type),
-        JSON.stringify(dataInStorageAsObjectArr),
-      )
-    } catch (e) {
-      sessionStorage.setItem(storageKey(type), JSON.stringify(data))
-    }
-  }
 
   // Alina TODO: check if the items are already in Local Storage before making server call.
 
@@ -133,7 +108,8 @@ export default function useGetInfoFromIds<T extends EntityHeader | UserProfile>(
               ? newIds
               : newIds.map(el => ({ targetId: el }))
           const newReferencesChunks = chunk(newReferences, 45)
-          const totalData: T[] = []
+          const totalData: (EntityHeader | UserProfile)[] = []
+          console.log('newReferencesChunks = ', newReferencesChunks)
           for (const newReferences of newReferencesChunks) {
             const newData =
               type === 'USER_PROFILE'
@@ -144,14 +120,19 @@ export default function useGetInfoFromIds<T extends EntityHeader | UserProfile>(
                   )
             totalData.push(...(newData as T[]))
           }
-          setData(oldData => oldData.concat(...(totalData as T[])))
+
+          console.log('setting state in useGetInfo = ')
+          setData(oldData => {
+            // @ts-ignore
+            return oldData.concat(totalData)
+          })
         } catch (error) {
           console.error('Error on data retrieval', error)
         }
       }
-      saveToSessionStorage(data, type)
     }
     getData()
   }, [token, type, newValues])
+  // @ts-ignore
   return data
 }

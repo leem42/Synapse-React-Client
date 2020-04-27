@@ -94,23 +94,23 @@ export default function AccessRequirementList({
     const sortAccessRequirementByCompletion = async (
       requirements: Array<AccessRequirement>,
     ): Promise<Array<AccessRequirementAndStatus>> => {
-      const statuses = requirements.map((req) => {
+      const statuses = requirements.map(req => {
         return SynapseClient.getAccessRequirementStatus(token, req.id)
       })
       const accessRequirementStatuses = await Promise.all(statuses)
 
-      const requirementsAndStatuses = requirements.map((req) => {
+      const requirementsAndStatuses = requirements.map(req => {
         return {
           accessRequirement: req,
           accessRequirementStatus: accessRequirementStatuses.find(
-            (el) => Number(el.accessRequirementId) === req.id,
+            el => Number(el.accessRequirementId) === req.id,
           )!,
         }
       })
 
       const sortedRequirementsAndStatuses = sortBy(
         requirementsAndStatuses,
-        (reqAndStatus) => {
+        reqAndStatus => {
           // if its true then it should come first, which means that it should be higher in the list
           // which is sorted ascendingly
           return -1 * Number(reqAndStatus.accessRequirementStatus.isApproved)
@@ -126,6 +126,7 @@ export default function AccessRequirementList({
           return
         }
         if (!accessRequirementFromProps) {
+          console.log('get ar list 129')
           const requirements = await getAllAccessRequirements(token, entityId)
           const sortedAccessRequirements = await sortAccessRequirementByCompletion(
             requirements,

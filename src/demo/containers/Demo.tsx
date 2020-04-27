@@ -34,7 +34,7 @@ type DemoProps = {
  */
 class Demo extends React.Component<DemoProps, DemoState> {
   entityFormRef: any
-  searchParamsProps: any 
+  searchParamsProps: any
   /**
    * Maintain internal state of user session
    */
@@ -58,12 +58,12 @@ class Demo extends React.Component<DemoProps, DemoState> {
         entityId: 'syn16787123',
         menuConfig: [
           {
-            facet: 'dataStatus',
-            sql: 'SELECT studyStatus, dataStatus FROM syn16787123',
-          },
-          {
             facet: 'projectStatus',
             sql: 'SELECT * FROM syn16787123',
+          },
+          {
+            facet: 'dataStatus',
+            sql: 'SELECT studyStatus, dataStatus FROM syn16787123',
           },
           {
             facet: 'name',
@@ -338,7 +338,10 @@ class Demo extends React.Component<DemoProps, DemoState> {
             stackedBarChartConfiguration={{
               loadingScreen: <div />,
             }}
-            searchParams = {{facet: this.searchParamsProps['facet'], facetValue: this.searchParamsProps['facetValue']}}
+            searchParams={{
+              facet: this.searchParamsProps['facet'],
+              facetValue: this.searchParamsProps['facetValue'],
+            }}
           />
         </div>
       </div>
