@@ -1,18 +1,18 @@
 {
   "files": {
-    "main.css": "/Synapse-React-Client/static/css/main.85d414c2.chunk.css",
-    "main.js": "/Synapse-React-Client/static/js/main.def6464f.chunk.js",
-    "main.js.map": "/Synapse-React-Client/static/js/main.def6464f.chunk.js.map",
+    "main.css": "/Synapse-React-Client/static/css/main.1787b7f2.chunk.css",
+    "main.js": "/Synapse-React-Client/static/js/main.d81281f1.chunk.js",
+    "main.js.map": "/Synapse-React-Client/static/js/main.d81281f1.chunk.js.map",
     "runtime-main.js": "/Synapse-React-Client/static/js/runtime-main.16f49fc8.js",
     "runtime-main.js.map": "/Synapse-React-Client/static/js/runtime-main.16f49fc8.js.map",
     "static/css/2.11d466f2.chunk.css": "/Synapse-React-Client/static/css/2.11d466f2.chunk.css",
     "static/js/2.9ddb7c56.chunk.js": "/Synapse-React-Client/static/js/2.9ddb7c56.chunk.js",
     "static/js/2.9ddb7c56.chunk.js.map": "/Synapse-React-Client/static/js/2.9ddb7c56.chunk.js.map",
     "index.html": "/Synapse-React-Client/index.html",
-    "precache-manifest.ea98cc86daf1ada8c20af224df874198.js": "/Synapse-React-Client/precache-manifest.ea98cc86daf1ada8c20af224df874198.js",
+    "precache-manifest.d5fd6e0242ec2e31b8b5814a3e85c744.js": "/Synapse-React-Client/precache-manifest.d5fd6e0242ec2e31b8b5814a3e85c744.js",
     "service-worker.js": "/Synapse-React-Client/service-worker.js",
     "static/css/2.11d466f2.chunk.css.map": "/Synapse-React-Client/static/css/2.11d466f2.chunk.css.map",
-    "static/css/main.85d414c2.chunk.css.map": "/Synapse-React-Client/static/css/main.85d414c2.chunk.css.map",
+    "static/css/main.1787b7f2.chunk.css.map": "/Synapse-React-Client/static/css/main.1787b7f2.chunk.css.map",
     "static/js/2.9ddb7c56.chunk.js.LICENSE.txt": "/Synapse-React-Client/static/js/2.9ddb7c56.chunk.js.LICENSE.txt",
     "static/media/DNA_Two.svg": "/Synapse-React-Client/static/media/DNA_Two.d8f80972.svg",
     "static/media/Data2.svg": "/Synapse-React-Client/static/media/Data2.1104e430.svg",
@@ -35,7 +35,7 @@
     "static/js/runtime-main.16f49fc8.js",
     "static/css/2.11d466f2.chunk.css",
     "static/js/2.9ddb7c56.chunk.js",
-    "static/css/main.85d414c2.chunk.css",
-    "static/js/main.def6464f.chunk.js"
+    "static/css/main.1787b7f2.chunk.css",
+    "static/js/main.d81281f1.chunk.js"
   ]
 }
