@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react'
 import {
   QueryResultBundle,
   QueryBundleRequest,
-  FileHandleAssociation,
+  // FileHandleAssociation,
   FileHandleAssociateType,
-  BatchFileRequest,
+  // BatchFileRequest,
 } from '../utils/synapseTypes'
 import { SynapseClient, SynapseConstants } from '../utils'
-import { SynapseClientError, getFiles } from '../utils/SynapseClient'
+import { SynapseClientError } from '../utils/SynapseClient'
 import { Error } from '../containers/Error'
 import QueryCount from './QueryCount'
 
@@ -41,7 +41,7 @@ export default function (props: GoalsProps) {
     QueryResultBundle | undefined
   >()
   const [error, setError] = useState<string | SynapseClientError | undefined>()
-  const [assets, setAssets] = useState<string[] | undefined>()
+  // const [assets, setAssets] = useState<string[] | undefined>()
 
   useEffect(() => {
     const getData = async () => {
@@ -59,32 +59,32 @@ export default function (props: GoalsProps) {
         const data = await SynapseClient.getQueryTableResults(request, token)
         setQueryResult(data)
 
-        const assetColumnIndex = getFieldIndex(ExpectedColumns.ASSET, data)
-        const assets = data.queryResult.queryResults.rows.map(
-          el => el.values[assetColumnIndex],
-        )
-        const fileHandleAssociationList: FileHandleAssociation[] = assets.map(
-          fileId => {
-            return {
-              associateObjectId: entityId!,
-              associateObjectType: FileHandleAssociateType.TableEntity,
-              fileHandleId: fileId,
-            }
-          },
-        )
-        const batchFileRequest: BatchFileRequest = {
-          includeFileHandles: false,
-          includePreSignedURLs: true,
-          includePreviewPreSignedURLs: false,
-          requestedFiles: fileHandleAssociationList,
-        }
-        const files = await getFiles(batchFileRequest, token)
+        // const assetColumnIndex = getFieldIndex(ExpectedColumns.ASSET, data)
+        // const assets = data.queryResult.queryResults.rows.map(
+        //   el => el.values[assetColumnIndex],
+        // )
+        // const fileHandleAssociationList: FileHandleAssociation[] = assets.map(
+        //   fileId => {
+        //     return {
+        //       associateObjectId: entityId!,
+        //       associateObjectType: FileHandleAssociateType.TableEntity,
+        //       fileHandleId: fileId,
+        //     }
+        //   },
+        // )
+        // const batchFileRequest: BatchFileRequest = {
+        //   includeFileHandles: false,
+        //   includePreSignedURLs: true,
+        //   includePreviewPreSignedURLs: false,
+        //   requestedFiles: fileHandleAssociationList,
+        // }
+        // const files = await getFiles(batchFileRequest, token)
         setError(undefined)
-        setAssets(
-          files.requestedFiles
-            .filter(el => el.preSignedURL !== undefined)
-            .map(el => el.preSignedURL!),
-        )
+        // setAssets(
+        //   files.requestedFiles
+        //     .filter(el => el.preSignedURL !== undefined)
+        //     .map(el => el.preSignedURL!),
+        // )
       } catch (e) {
         console.error('Error on get data', e)
         setError(e)
@@ -97,6 +97,7 @@ export default function (props: GoalsProps) {
   const titleColumnIndex = getFieldIndex(ExpectedColumns.TITLE, queryResult)
   const summaryColumnIndex = getFieldIndex(ExpectedColumns.SUMMARY, queryResult)
   const linkColumnIndex = getFieldIndex(ExpectedColumns.LINK, queryResult)
+  const assetColumnIndex = getFieldIndex(ExpectedColumns.ASSET, queryResult)
 
   return (
     <div className="Goals">
@@ -109,12 +110,15 @@ export default function (props: GoalsProps) {
         const link = values[linkColumnIndex]
         // assume that we recieve assets in order of rows and there is an asset for each item
         // can revisit if this isn't the case.
-        const asset = assets?.[index]
+        const asset = values[assetColumnIndex]
+        const url = asset
+          ? `https://www.synapse.org/Portal/filehandleassociation?associatedObjectId=${entityId}&associatedObjectType=${FileHandleAssociateType.TableEntity}&fileHandleId=${asset}`
+          : ''
         return (
           <div className="Goals__Card">
             <div
               className="Goals__Card__header"
-              style={{ background: `url('${asset}')` }}
+              style={{ background: `url('${url}')` }}
             >
               <p>
                 <span className="Goals__Card__header__title"> {title} </span>

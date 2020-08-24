@@ -256,7 +256,7 @@ const App = ({
         component={() => (
           <div className="container">
             {' '}
-            <Resources entityId="syn22307746" token={token} />{' '}
+            <Resources entityId="syn22311127" token={token} />{' '}
           </div>
         )}
       />

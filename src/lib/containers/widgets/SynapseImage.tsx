@@ -1,13 +1,11 @@
 import * as React from 'react'
-import { getEntity, getFiles } from '../../utils/SynapseClient'
+import { getEntity, getStablePresignedUrl } from '../../utils/SynapseClient'
 import {
-  BatchFileRequest,
-  BatchFileResult,
   FileEntity,
   FileHandle,
   FileHandleAssociateType,
-  FileHandleAssociation,
 } from '../../utils/synapseTypes/'
+import { ClientError, Error } from '../Error'
 
 type SynapseImageProps = {
   wikiId?: string
@@ -27,6 +25,7 @@ type SynapseImageProps = {
 
 type SynapseImageState = {
   preSignedURL: string
+  error: ClientError
 }
 
 class SynapseImage extends React.Component<
@@ -39,6 +38,7 @@ class SynapseImage extends React.Component<
     this.getSynapseFiles = this.getSynapseFiles.bind(this)
     this.state = {
       preSignedURL: '',
+      error: undefined,
     }
   }
 
@@ -48,42 +48,37 @@ class SynapseImage extends React.Component<
       getEntity<FileEntity>(token, synapseId).then(
         // https://docs.synapse.org/rest/org/sagebionetworks/repo/model/FileEntity.html
         (data: FileEntity) => {
-          const fileHandleAssociationList = [
-            {
-              associateObjectId: synapseId,
-              associateObjectType: FileHandleAssociateType.FileEntity,
-              fileHandleId: data.dataFileHandleId,
-            },
-          ]
-          this.getSynapseFiles(fileHandleAssociationList, data.dataFileHandleId)
+          this.getSynapseFiles(
+            synapseId,
+            FileHandleAssociateType.FileEntity,
+            data.dataFileHandleId,
+          )
         },
       )
     }
   }
   public getSynapseFiles(
-    fileHandleAssociationList: FileHandleAssociation[],
-    id: string,
+    associateObjectId: string,
+    associateObjectType: FileHandleAssociateType,
+    fileHandleId: string,
   ) {
-    // overload the method for two different use cases, one where
-    // the image is attached to an entity and creates a list on the spot,
-    // the other where list is passed in from componentDidMount in MarkdownSynapse
-    const request: BatchFileRequest = {
-      includeFileHandles: false,
-      includePreSignedURLs: true,
-      includePreviewPreSignedURLs: false,
-      requestedFiles: fileHandleAssociationList,
-    }
-    getFiles(request, this.props.token)
-      .then((data: BatchFileResult) => {
-        const { preSignedURL } = data.requestedFiles.filter(
-          el => el.fileHandleId === id,
-        )[0]
+    getStablePresignedUrl(
+      associateObjectId,
+      associateObjectType,
+      fileHandleId,
+      this.props.token,
+    )
+      .then(preSignedURL => {
         this.setState({
-          preSignedURL: preSignedURL!,
+          preSignedURL,
+          error: undefined,
         })
       })
-      .catch(err => {
-        console.error('Error on getting image ', err)
+      .catch(error => {
+        console.error('Error on getting image ', error)
+        this.setState({
+          error,
+        })
       })
   }
   public componentDidMount() {
@@ -94,19 +89,17 @@ class SynapseImage extends React.Component<
       // Can get presigned url right away from wiki association
       const { fileName, fileResults = [] } = this.props
       const { id } = fileResults.filter(el => el.fileName === fileName)[0]
-      const fileHandleAssociationList: FileHandleAssociation[] = [
-        {
-          associateObjectId: this.props.wikiId,
-          associateObjectType: FileHandleAssociateType.WikiAttachment,
-          fileHandleId: id,
-        },
-      ]
-      this.getSynapseFiles(fileHandleAssociationList, id)
+      this.getSynapseFiles(
+        this.props.wikiId,
+        FileHandleAssociateType.WikiAttachment,
+        id,
+      )
     }
   }
 
   public render() {
-    const { params } = this.props
+    const { params, token } = this.props
+    const { preSignedURL, error } = this.state
     const { align = '', altText = 'synapse image' } = params
     let scale = `${Number(params.scale) ?? 100}%`
     const alignLowerCase = align.toLowerCase()
@@ -124,15 +117,18 @@ class SynapseImage extends React.Component<
       width: scale,
       height: scale,
     }
-    if (!this.state.preSignedURL) {
+    if (!preSignedURL) {
       return null
+    }
+    if (error) {
+      return <Error token={token} error={error} />
     }
     return (
       <React.Fragment>
         <img
           alt={altText}
           className={'img-fluid  ' + className}
-          src={this.state.preSignedURL}
+          src={preSignedURL}
           style={style}
         />
       </React.Fragment>

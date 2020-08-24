@@ -2,22 +2,23 @@ import * as React from 'react'
 import { SynapseClientError } from '../utils/SynapseClient'
 import SignInButton from './SignInButton'
 import { Alert } from 'react-bootstrap'
+
+export type ClientError = undefined | string | Error | SynapseClientError
+
 type ErrorProps = {
   token?: string
-  error?: string | Error | SynapseClientError
+  error?: ClientError
 }
 
-function isSynapseClientError(
-  error: string | Error | SynapseClientError,
-): error is SynapseClientError {
+function isSynapseClientError(error: ClientError): error is SynapseClientError {
   return (error as any).status !== undefined
 }
 
-function isError(error: string | Error | SynapseClientError): error is Error {
+function isError(error: ClientError): error is Error {
   return (error as any).message !== undefined
 }
 
-function isString(error: string | Error | SynapseClientError): error is string {
+function isString(error: ClientError): error is string {
   return typeof error === 'string'
 }
 
