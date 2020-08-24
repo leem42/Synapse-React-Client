@@ -2,9 +2,7 @@ import React, { useEffect, useState } from 'react'
 import {
   QueryResultBundle,
   QueryBundleRequest,
-  // FileHandleAssociation,
   FileHandleAssociateType,
-  // BatchFileRequest,
 } from '../utils/synapseTypes'
 import { SynapseClient, SynapseConstants } from '../utils'
 import { SynapseClientError } from '../utils/SynapseClient'
@@ -41,7 +39,6 @@ export default function (props: GoalsProps) {
     QueryResultBundle | undefined
   >()
   const [error, setError] = useState<string | SynapseClientError | undefined>()
-  // const [assets, setAssets] = useState<string[] | undefined>()
 
   useEffect(() => {
     const getData = async () => {
@@ -58,33 +55,7 @@ export default function (props: GoalsProps) {
       try {
         const data = await SynapseClient.getQueryTableResults(request, token)
         setQueryResult(data)
-
-        // const assetColumnIndex = getFieldIndex(ExpectedColumns.ASSET, data)
-        // const assets = data.queryResult.queryResults.rows.map(
-        //   el => el.values[assetColumnIndex],
-        // )
-        // const fileHandleAssociationList: FileHandleAssociation[] = assets.map(
-        //   fileId => {
-        //     return {
-        //       associateObjectId: entityId!,
-        //       associateObjectType: FileHandleAssociateType.TableEntity,
-        //       fileHandleId: fileId,
-        //     }
-        //   },
-        // )
-        // const batchFileRequest: BatchFileRequest = {
-        //   includeFileHandles: false,
-        //   includePreSignedURLs: true,
-        //   includePreviewPreSignedURLs: false,
-        //   requestedFiles: fileHandleAssociationList,
-        // }
-        // const files = await getFiles(batchFileRequest, token)
         setError(undefined)
-        // setAssets(
-        //   files.requestedFiles
-        //     .filter(el => el.preSignedURL !== undefined)
-        //     .map(el => el.preSignedURL!),
-        // )
       } catch (e) {
         console.error('Error on get data', e)
         setError(e)

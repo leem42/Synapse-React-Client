@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { QueryBundleRequest, QueryResultBundle } from '../utils/synapseTypes'
-import { SynapseClientError } from '../utils/SynapseClient'
 import { SynapseClient, SynapseConstants } from '../utils'
-import { Error } from './Error'
+import { Error, ClientError } from './Error'
 import MarkdownSynapse from './MarkdownSynapse'
 import { getFieldIndex } from './Goals'
 
@@ -19,7 +18,7 @@ enum ExpectedColumns {
 export default function Resources(props: ResourcesProps) {
   const { entityId, token } = props
   const [index, setIndex] = useState(0)
-  const [error, setError] = useState<string | SynapseClientError | undefined>()
+  const [error, setError] = useState<ClientError>()
   const [queryResult, setQueryResult] = useState<
     QueryResultBundle | undefined
   >()

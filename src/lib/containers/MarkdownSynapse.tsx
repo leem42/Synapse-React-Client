@@ -7,8 +7,7 @@ import SynapseImage from './widgets/SynapseImage'
 import SynapsePlot from './widgets/SynapsePlot'
 import SynapseVideo from './widgets/SynapseVideo'
 import { ObjectType } from '../utils/synapseTypes/WikiPageKey'
-import { Error } from '../containers/Error'
-import { SynapseClientError } from '../utils/SynapseClient'
+import { Error, ClientError } from '../containers/Error'
 
 const TOC_CLASS = {
   1: 'toc-indent1',
@@ -51,7 +50,7 @@ type MarkdownSynapseState = {
   md: any
   data: Partial<WikiPage>
   fileHandles?: FileHandleResults
-  error: SynapseClientError | undefined
+  error: ClientError
   isLoading: boolean
 }
 /**
